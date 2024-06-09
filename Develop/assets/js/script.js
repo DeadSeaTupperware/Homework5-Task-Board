@@ -1,7 +1,6 @@
 // Retrieve tasks and nextId from localStorage
 let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
 let nextId = JSON.parse(localStorage.getItem("nextId")) || 1;
-const addTaskButton = document.querySelector("#add-task-btn");
 
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
@@ -22,7 +21,18 @@ function createTaskCard(task) {
       </div>
     `);
 
-    return taskCard;
+    if (task.deadline && task.status !== 'done') {
+        const now = dayjs();
+        const taskDueDate = dayjs(task.deadline, 'MM-DD-YYYY');
+        if (now.isSame(taskDueDate, 'day')) {
+          taskCard.addClass('bg-warning text-white');
+        } else if (now.isAfter(taskDueDate)) {
+          taskCard.find('.card-body').addClass('bg-danger text-white');
+          taskCard.find('.delete-btn').addClass('border-light');
+        }
+      }
+
+     return taskCard;
 
 }
 
@@ -46,7 +56,8 @@ function renderTaskList() {
 
 
 // Todo: create a function to handle adding a new task
-function handleAddTask(){
+function handleAddTask(event){
+    event.preventDefault();
   
     const title = $("#task-title").val().trim();
     const description = $("#task-desc").val().trim();
@@ -87,19 +98,10 @@ function handleDrop(event, ui) {
 
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
-
-});
-
-// Event Listener for add task.
-addTaskButton.addEventListener('click', function (event) {
-handleAddTask();
-});
-
-$(document).ready(function () {
     renderTaskList();
   
     $("#formModal").on("shown.bs.modal", function () {
-      $("#title").focus();
+      $("#task-title").focus();
     });
   
     $("#addTaskForm").on("submit", handleAddTask);
@@ -111,7 +113,7 @@ $(document).ready(function () {
       drop: handleDrop
     });
   
-    $("#deadline").datepicker({
+    $("#task-duedate").datepicker({
       dateFormat: "yy-mm-dd"
     });
   });
