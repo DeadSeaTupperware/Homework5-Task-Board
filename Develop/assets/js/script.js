@@ -46,8 +46,7 @@ function renderTaskList() {
 
 
 // Todo: create a function to handle adding a new task
-function handleAddTask(event){
-    event.preventDefault();
+function handleAddTask(){
   
     const title = $("#task-title").val().trim();
     const description = $("#task-desc").val().trim();
@@ -95,3 +94,24 @@ $(document).ready(function () {
 addTaskButton.addEventListener('click', function (event) {
 handleAddTask();
 });
+
+$(document).ready(function () {
+    renderTaskList();
+  
+    $("#formModal").on("shown.bs.modal", function () {
+      $("#title").focus();
+    });
+  
+    $("#addTaskForm").on("submit", handleAddTask);
+  
+    $(document).on("click", ".delete-btn", handleDeleteTask);
+  
+    $(".lane").droppable({
+      accept: ".task-card",
+      drop: handleDrop
+    });
+  
+    $("#deadline").datepicker({
+      dateFormat: "yy-mm-dd"
+    });
+  });
