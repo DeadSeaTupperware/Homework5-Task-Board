@@ -15,22 +15,22 @@ function createTaskCard(task) {
         <div class="card-body">
           <h5 class="card-title">${title}</h5>
           <p class="card-text">${description}</p>
-          <p class="card-text"><strong>Deadline:</strong> ${dayjs(duedate).format('MM-DD-YYYY')}</p>
+          <p class="card-text"><strong>Due Date:</strong> ${dayjs(duedate).format('MM-DD-YYYY')}</p>
           <button class="btn btn-danger btn-sm delete-btn"><i class="fas fa-trash"></i></button>
         </div>
       </div>
     `);
 
-    // if (task.deadline && task.status !== 'done') {
-    //     const now = dayjs();
-    //     const taskDueDate = dayjs(task.deadline, 'MM-DD-YYYY');
-    //     if (now.isSame(taskDueDate, 'day')) {
-    //       taskCard.addClass('bg-warning text-white');
-    //     } else if (now.isAfter(taskDueDate)) {
-    //       taskCard.find('.card-body').addClass('bg-danger text-white');
-    //       taskCard.find('.delete-btn').addClass('border-light');
-    //     }
-    //   }
+    if (task.duedate && task.status !== 'done') {
+        const now = dayjs();
+        const taskDueDate = dayjs(task.duedate, 'MM-DD-YYYY');
+        if (now.isSame(taskDueDate, 'day')) {
+          taskCard.addClass('bg-warning text-white');
+        } else if (now.isAfter(taskDueDate)) {
+          taskCard.find('.card-body').addClass('bg-danger text-white');
+          taskCard.find('.delete-btn').addClass('border-light');
+        }
+      }
 
      return taskCard;
 
@@ -87,9 +87,12 @@ function handleAddTask(event){
   }
 
 // Todo: create a function to handle deleting a task
-function handleDeleteTask(event){
-
-}
+function handleDeleteTask(event) {
+    const taskId = $(this).closest(".task-card").data("id");
+    taskList = taskList.filter(task => task.id !== taskId);
+    localStorage.setItem("tasks", JSON.stringify(taskList));
+    renderTaskList();
+  }
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
